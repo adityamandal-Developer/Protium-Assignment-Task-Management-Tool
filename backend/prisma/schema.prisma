@@ -12,3 +12,79 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  createdTasks  Task[]    @relation("TaskCreator")
+  assignedTasks Task[]    @relation("TaskAssignee")
+  comments      Comment[]
+  teams         Team[]    @relation("TeamMembers")
+  ownedTeams    Team[]    @relation("TeamOwner")
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  status      TaskStatus
+  priority    Priority
+  dueDate     DateTime
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relationships
+  creatorId  String
+  creator    User      @relation("TaskCreator", fields: [creatorId], references: [id])
+  assigneeId String?
+  assignee   User?     @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  teamId     String
+  team       Team      @relation(fields: [teamId], references: [id])
+  comments   Comment[]
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  ownerId String
+  owner   User   @relation("TeamOwner", fields: [ownerId], references: [id])
+  members User[] @relation("TeamMembers")
+  tasks   Task[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
