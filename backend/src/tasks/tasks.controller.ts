@@ -1,4 +1,3 @@
-// src/tasks/tasks.controller.ts
 import {
   Controller,
   Get,
@@ -26,17 +25,23 @@ export class TasksController {
 
   @Post()
   create(@Body() createTaskDto: CreateTaskDto, @GetUser() user: any) {
-    return this.tasksService.create(createTaskDto, user.id);
+    console.log(user.userId);
+    return this.tasksService.create(createTaskDto, user.userId);
+  }
+
+  @Get('stats')
+  getStats(@GetUser() user: any) {
+    return this.tasksService.getTaskStats(user.userId);
   }
 
   @Get()
   findAll(@Query() filterDto: FilterTasksDto, @GetUser() user: any) {
-    return this.tasksService.findAll(filterDto, user.id);
+    return this.tasksService.findAll(filterDto, user.userId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string, @GetUser() user: any) {
-    return this.tasksService.findOne(id, user.id);
+    return this.tasksService.findOne(id, user.userId);
   }
 
   @Patch(':id')
@@ -45,12 +50,12 @@ export class TasksController {
     @Body() updateTaskDto: UpdateTaskDto,
     @GetUser() user: any,
   ) {
-    return this.tasksService.update(id, updateTaskDto, user.id);
+    return this.tasksService.update(id, updateTaskDto, user.userId);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string, @GetUser() user: any) {
-    return this.tasksService.remove(id, user.id);
+    return this.tasksService.remove(id, user.userId);
   }
 
   @Post(':id/comments')
@@ -59,6 +64,6 @@ export class TasksController {
     @Body('content') content: string,
     @GetUser() user: any,
   ) {
-    return this.tasksService.addComment(id, user.id, content);
+    return this.tasksService.addComment(id, user.userId, content);
   }
 }

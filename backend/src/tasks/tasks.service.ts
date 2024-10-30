@@ -1,22 +1,57 @@
-// src/tasks/tasks.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { FilterTasksDto } from './dto/filter-tasks.dto';
 import { PrismaService } from 'prisma/prisma.service';
+import { Priority, Task, TaskStatus } from '@prisma/client';
 
 @Injectable()
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createTaskDto: CreateTaskDto, userId: string) {
-    return this.prisma.task.create({
-      data: {
-        ...createTaskDto,
-        creatorId: userId,
+  async create(createTaskDto: CreateTaskDto, userId: string): Promise<Task> {
+    const { teamId, assigneeId, ...taskData } = createTaskDto;
+
+    // Prepare the base task data
+    const data: any = {
+      ...taskData,
+      creator: {
+        connect: { id: userId },
       },
+      // Convert string date to Date object if needed
+      dueDate: new Date(createTaskDto.dueDate),
+    };
+
+    // Optionally connect team if teamId is provided
+    if (teamId) {
+      data.team = {
+        connect: { id: teamId },
+      };
+    }
+
+    // Optionally connect assignee if assigneeId is provided
+    if (assigneeId) {
+      data.assignee = {
+        connect: { id: assigneeId },
+      };
+    }
+
+    return this.prisma.task.create({
+      data,
       include: {
-        creator: true,
+        creator: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         assignee: true,
         team: true,
       },
@@ -125,6 +160,9 @@ export class TasksService {
   }
 
   async addComment(taskId: string, userId: string, content: string) {
+    if (!content) {
+      throw new NotAcceptableException('comment not provided');
+    }
     return this.prisma.comment.create({
       data: {
         content,
@@ -136,5 +174,49 @@ export class TasksService {
         task: true,
       },
     });
+  }
+
+  async getTaskStats(userId: string) {
+    // Get total tasks
+    const totalTasks = await this.prisma.task.count({
+      where: {
+        OR: [{ creatorId: userId }, { assigneeId: userId }],
+      },
+    });
+
+    // Get pending tasks (TODO + IN_PROGRESS)
+    const pendingTasks = await this.prisma.task.count({
+      where: {
+        OR: [{ creatorId: userId }, { assigneeId: userId }],
+        status: {
+          in: [TaskStatus.TODO, TaskStatus.IN_PROGRESS],
+        },
+      },
+    });
+
+    // Get completed tasks
+    const completedTasks = await this.prisma.task.count({
+      where: {
+        OR: [{ creatorId: userId }, { assigneeId: userId }],
+        status: TaskStatus.COMPLETED,
+      },
+    });
+
+    // Get high priority tasks (HIGH + URGENT)
+    const highPriorityTasks = await this.prisma.task.count({
+      where: {
+        OR: [{ creatorId: userId }, { assigneeId: userId }],
+        priority: {
+          in: [Priority.HIGH, Priority.URGENT],
+        },
+      },
+    });
+
+    return {
+      totalTasks,
+      pendingTasks,
+      completedTasks,
+      highPriorityTasks,
+    };
   }
 }

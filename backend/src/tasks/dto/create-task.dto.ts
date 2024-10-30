@@ -25,7 +25,8 @@ export class CreateTaskDto {
   dueDate: string;
 
   @IsUUID()
-  teamId: string;
+  @IsOptional()
+  teamId?: string;
 
   @IsUUID()
   @IsOptional()
