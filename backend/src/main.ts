@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
-const origins = ['http://localhost:3000'];
+const origins = ['https://protium-assignment-task-management-tool.vercel.app'];
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
