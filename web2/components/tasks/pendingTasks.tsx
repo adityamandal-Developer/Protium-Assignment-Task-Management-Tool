@@ -7,6 +7,7 @@ interface PendingTasksProps {
   total: number;
 }
 const PendingTasks: React.FC<PendingTasksProps> = ({ count, total }) => {
+  const pendingPercentage = Math.round((count / total) * 100);
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -17,7 +18,7 @@ const PendingTasks: React.FC<PendingTasksProps> = ({ count, total }) => {
         <div className="text-2xl font-bold">{count}</div>
         <p className="text-xs text-muted-foreground">
           {" "}
-          {(count / total) * 100}% Pending
+          {pendingPercentage}% Pending
         </p>
       </CardContent>
     </Card>

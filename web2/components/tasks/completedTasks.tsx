@@ -7,6 +7,7 @@ interface CompletedTasksProps {
   total: number;
 }
 const CompletedTasks: React.FC<CompletedTasksProps> = ({ count, total }) => {
+  const totalPercentage = Math.round((count / total) * 100);
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -16,7 +17,7 @@ const CompletedTasks: React.FC<CompletedTasksProps> = ({ count, total }) => {
       <CardContent>
         <div className="text-2xl font-bold">{count}</div>
         <p className="text-xs text-muted-foreground">
-          {(count / total) * 100}% completed
+          {totalPercentage}% completed
         </p>
       </CardContent>
     </Card>
