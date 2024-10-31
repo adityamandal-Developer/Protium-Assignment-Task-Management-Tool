@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -7,7 +6,10 @@ import { getServerSession } from "next-auth/next";
 import ClientSessionProvider from "./ClientSessionProvider";
 import StoreProvider from "./StoreProvider";
 import { authOptions } from "@/authOptions";
-import dynamic from "next/dynamic";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./theme";
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -37,7 +39,11 @@ export default async function RootLayout({
       >
         <ClientSessionProvider session={session}>
           <StoreProvider>
-            <ThemeProviders>{children}</ThemeProviders>
+            <ThemeProviders>
+              <AppRouterCacheProvider>
+                <ThemeProvider theme={theme}>{children}</ThemeProvider>
+              </AppRouterCacheProvider>
+            </ThemeProviders>
           </StoreProvider>
         </ClientSessionProvider>
       </body>

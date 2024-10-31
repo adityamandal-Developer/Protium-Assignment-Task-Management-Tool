@@ -13,9 +13,11 @@
     "react-dom": "$react-dom"
   },
   "dependencies": {
+    "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@hookform/resolvers": "^3.9.1",
+    "@mui/material-nextjs": "^6.1.6",
     "@mui/x-charts": "^7.22.0",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.2",

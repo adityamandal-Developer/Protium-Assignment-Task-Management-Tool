@@ -8,7 +8,7 @@ const Chart = () => {
       <CardHeader>
         <CardTitle>Overview</CardTitle>
       </CardHeader>
-      <CardContent className="p-0 pb-2 w-full m-0">
+      <CardContent className="flex justify-center items-center w-full">
         <PieActiveArc />
       </CardContent>
     </Card>

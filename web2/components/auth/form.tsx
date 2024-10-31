@@ -84,9 +84,6 @@ const Form: React.FC<FormProps> = ({
               ? "loggin in..."
               : "log in"}
           </Button>
-          <Button variant="outline" className="w-full">
-            Github
-          </Button>
         </form>
         <div className="mt-4 text-center text-sm">
           {formType === "register"
@@ -94,7 +91,7 @@ const Form: React.FC<FormProps> = ({
             : "Don't have an account?"}
 
           <Link
-            href={formType === "register" ? "/register" : "/login"}
+            href={formType === "register" ? "/login" : "/register"}
             className="underline"
           >
             {formType === "register" ? " Login" : " Sign up"}

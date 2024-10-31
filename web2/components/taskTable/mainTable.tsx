@@ -162,7 +162,7 @@ const TaskTable = () => {
    *  @EDIT_TASK
    * */
 
-  const handleEditTask = (task: Task, user?: User) => {
+  const handleEditTaskOpen = (task: Task) => {
     setSelectedTask(task);
     setUpdatedTaskData({
       title: task.title,
@@ -170,12 +170,53 @@ const TaskTable = () => {
       status: task.status,
       priority: task.priority,
       dueDate: task.dueDate,
-      assigneeId: user?.id,
+      assigneeId: task.assigneeId,
     });
-    if (user) {
-      handleSaveChanges();
-    }
     setDialogOpen(true);
+  };
+
+  const handlePriorityChange = async (task: Task, priority: Priority) => {
+    // Create the updated data object
+    const updatedData = {
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: priority, // Use the new priority
+      dueDate: task.dueDate,
+      assigneeId: task.assigneeId,
+    };
+
+    // Set both states using await Promise.all to ensure they're updated
+    await Promise.all([
+      new Promise<void>((resolve) => {
+        setSelectedTask(task);
+        resolve();
+      }),
+      new Promise<void>((resolve) => {
+        setUpdatedTaskData(updatedData);
+        resolve();
+      }),
+    ]);
+
+    // Add debug log before API call
+    console.log("Data being sent to API:", updatedData);
+
+    // Now call handleSaveChanges
+    await handleSaveChanges();
+  };
+
+  const handleAssigneeChange = async (task: Task, user: User) => {
+    setSelectedTask(task);
+    const updatedData = {
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      dueDate: task.dueDate,
+      assigneeId: user.id,
+    };
+    setUpdatedTaskData(updatedData);
+    await handleSaveChanges();
   };
 
   const handleSaveChanges = async () => {
@@ -264,7 +305,9 @@ const TaskTable = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleEditTask(task)}>
+                      <DropdownMenuItem
+                        onClick={() => handleEditTaskOpen(task)}
+                      >
                         Edit Profile
                       </DropdownMenuItem>
                       <DropdownMenuSub>
@@ -276,7 +319,7 @@ const TaskTable = () => {
                             {users.map((user) => (
                               <DropdownMenuItem
                                 key={user.id}
-                                onClick={() => handleEditTask(task, user)}
+                                onClick={() => handleAssigneeChange(task, user)}
                               >
                                 {user.name}
                               </DropdownMenuItem>
@@ -286,7 +329,25 @@ const TaskTable = () => {
                           </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                       </DropdownMenuSub>
-                      <DropdownMenuItem>Priority</DropdownMenuItem>
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                          Priority
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent>
+                            {(
+                              ["LOW", "MEDIUM", "HIGH", "URGENT"] as Priority[]
+                            ).map((prio, idx) => (
+                              <DropdownMenuItem
+                                key={idx}
+                                onClick={() => handlePriorityChange(task, prio)}
+                              >
+                                {prio}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
@@ -414,7 +475,7 @@ const TaskTable = () => {
           </div>
           <DialogFooter>
             <Button type="submit" onClick={handleSaveChanges}>
-              Savee changes
+              Save changes
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -141,33 +141,34 @@ const CreateTaskDialog = () => {
             <Label htmlFor="dueDate" className="text-right">
               Due Date
             </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-[240px] justify-start text-left font-normal",
+                    !dueDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon />
+                  {dueDate ? (
+                    format(dueDate, "PPP")
+                  ) : (
+                    <span>Pick a dueDate</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  className="col-span-5"
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={setDueDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[240px] justify-start text-left font-normal",
-                  !dueDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon />
-                {dueDate ? format(dueDate, "PPP") : <span>Pick a dueDate</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                className="col-span-5"
-                mode="single"
-                selected={dueDate}
-                onSelect={setDueDate}
-                disabled={(date) =>
-                  date > new Date() || date < new Date("1900-01-01")
-                }
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
         </div>
         <DialogFooter>
           <DialogTrigger asChild>
