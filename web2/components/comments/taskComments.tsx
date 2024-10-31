@@ -63,7 +63,7 @@ const TaskComments: React.FC = () => {
   };
 
   return (
-    <ScrollArea className="rounded-md border col-span-3 max-h-[500px] p-4">
+    <ScrollArea className="rounded-md border col-span-3 max-h-[590px] p-4">
       <CardTitle className="p-2">Conversations</CardTitle>
       {localTasks.map((task) => (
         <Card key={task.id} className="w-full p-4 rounded-md mb-4 p-2">
@@ -108,7 +108,7 @@ const TaskComments: React.FC = () => {
               placeholder="Type your message here."
               className=""
             />
-            <Button type="submit" className="w-[40%]">
+            <Button type="submit" className="w-[60%] sm:w-[40%]">
               Send message
             </Button>
           </form>

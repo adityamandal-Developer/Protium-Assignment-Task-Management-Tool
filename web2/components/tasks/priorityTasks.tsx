@@ -8,6 +8,7 @@ interface PriorityTasksProps {
 }
 
 const PriorityTasks: React.FC<PriorityTasksProps> = ({ count, total }) => {
+  const priorityPercentage = Math.round((count / total) * 100);
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -18,7 +19,7 @@ const PriorityTasks: React.FC<PriorityTasksProps> = ({ count, total }) => {
         <div className="text-2xl font-bold">{count}</div>
         <p className="text-xs text-muted-foreground">
           {" "}
-          {(count / total) * 100}% tasks on priority
+          {priorityPercentage}% tasks on priority
         </p>
       </CardContent>
     </Card>
