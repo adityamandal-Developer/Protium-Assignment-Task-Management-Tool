@@ -14,6 +14,9 @@ export class TasksService {
   constructor(private prisma: PrismaService) {}
 
   async create(createTaskDto: CreateTaskDto, userId: string): Promise<Task> {
+    if (createTaskDto.title === '' || createTaskDto.description === '') {
+      throw new NotAcceptableException('Details not valid');
+    }
     const { teamId, assigneeId, ...taskData } = createTaskDto;
 
     // Prepare the base task data

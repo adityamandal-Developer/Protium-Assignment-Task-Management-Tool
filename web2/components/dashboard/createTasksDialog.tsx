@@ -32,6 +32,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { AppDispatch } from "@/store";
 import { Priority, Status } from "@/types/types";
+import { useToast } from "@/hooks/use-toast";
 
 interface TaskData {
   title: string;
@@ -41,6 +42,7 @@ interface TaskData {
   dueDate: string | null;
 }
 const CreateTaskDialog = () => {
+  const { toast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
   const { data: session } = useSession();
 
@@ -50,9 +52,16 @@ const CreateTaskDialog = () => {
   const [status, setStatus] = useState<Status>("TODO"); // Set a default value
   const [priority, setPriority] = useState<Priority>("MEDIUM");
   const [dueDate, setDueDate] = useState<Date | undefined>(new Date());
-
+  const [error, setError] = useState<string | null>(null);
   // Handle form submission
   const handleSubmit = () => {
+    if (title === "" || description === "") {
+      return toast({
+        title: "Uh oh! Something went wrong.",
+        description: "Title or description is missing",
+      });
+    }
+
     const taskData: TaskData = {
       title,
       description,
@@ -63,6 +72,7 @@ const CreateTaskDialog = () => {
 
     if (session?.accessToken) {
       dispatch(createTask({ taskData, token: session.accessToken }));
+      setError(null);
     }
   };
 
@@ -85,6 +95,7 @@ const CreateTaskDialog = () => {
             </Label>
             <Input
               id="title"
+              required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="col-span-3"
@@ -96,6 +107,7 @@ const CreateTaskDialog = () => {
             </Label>
             <Input
               id="description"
+              required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="col-span-3"

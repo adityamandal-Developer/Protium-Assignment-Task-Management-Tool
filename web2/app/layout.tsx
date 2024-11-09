@@ -9,6 +9,7 @@ import { authOptions } from "@/authOptions";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,7 +42,10 @@ export default async function RootLayout({
           <StoreProvider>
             <ThemeProviders>
               <AppRouterCacheProvider>
-                <ThemeProvider theme={theme}>{children}</ThemeProvider>
+                <ThemeProvider theme={theme}>
+                  {children}
+                  <Toaster />
+                </ThemeProvider>
               </AppRouterCacheProvider>
             </ThemeProviders>
           </StoreProvider>
