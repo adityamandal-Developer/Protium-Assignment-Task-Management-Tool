@@ -13,14 +13,17 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { FilterTasksDto } from './dto/filter-tasks.dto';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { GetUser } from '../../src/auth/get-user.decorator';
+import { JwtAuthGuard } from '../../src/auth/jwt-auth.guard';
 // import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 // import { GetUser } from '../auth/get-user.decorator';
 
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
 export class TasksController {
+  findTasksByTeam(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
